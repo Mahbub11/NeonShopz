@@ -2,26 +2,287 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+html,body{
+  height: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
+@font-face {
+  src: url("./fonts/PPNeueMontreal.woff");
+  font-family: NeueMontreal;
+}
+@font-face {
+  src: url("./fonts/NeueMontreal.woff");
+  font-family: NM;
+}
+@font-face {
+  src: url("./fonts/FoundersGrotesk.woff");
+  font-family: FG;
+}
+
+@font-face {
+  src: url("./fonts/GeistMonoVF.woff");
+  font-family: GMVF;
+}
+
+@font-face {
+  src: url("./fonts/GeistVF.woff");
+  font-family: GVF;
+}
+
+@font-face {
+  src: url("./fonts/Poppins_Light.ttf");
+  font-family: PopinsLight;
+}
+
+@font-face {
+  src: url("./fonts/Poppins_ExtraLight.ttf");
+  font-family: PopinsExtraLight;
+}
+
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 0 0% 100%;
+    --foreground: 0 0% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 3.9%;
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 0 0% 96.1%;
+    --secondary-foreground: 0 0% 9%;
+    --muted: 0 0% 96.1%;
+    --muted-foreground: 0 0% 45.1%;
+    --accent: 0 0% 96.1%;
+    --accent-foreground: 0 0% 9%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 89.8%;
+    --input: 0 0% 89.8%;
+    --ring: 0 0% 3.9%;
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+    --radius: 0.5rem;
+  }
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+
+
+.link-flash {
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+
+  position: relative;
+}
+
+.link-flash::before,
+.link-flash::after {
+  position: absolute;
+  content: "";
+  left: 0;
+  bottom: -2px;
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: #ffffff;
+  transition: 1.1s var(--ease-out-expo);
+}
+
+.link-flash::before {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.link-flash::after {
+  transform-origin: right;
+  transition-delay: 0.25s;
+}
+
+.link-flash:hover::before {
+  transform: scaleX(1);
+  transition-delay: 0.25s;
+}
+
+.link-flash:hover::after {
+  transform: scaleX(0);
+  transition-delay: 0s;
+}
+/* link flash 1px */
+
+
+.link-flash2 {
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+
+  position: relative;
+  display: inline-block; /* Ensure it works with inline text */
+}
+
+.link-flash2::before,
+.link-flash2::after {
+  position: absolute;
+  content: "";
+  left: 0;
+  bottom: -1px;
+  display: block;
+  width: 100%;
+  height: .2px;
+  background: transparent; /* Start as transparent */
+  transition: transform 1.1s var(--ease-out-expo), background-color 1.1s var(--ease-out-expo); /* Transition background color and transform */
+}
+
+.link-flash2::before {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.link-flash2::after {
+  transform-origin: right;
+  transition-delay: 0.25s;
+}
+
+.link-flash2:hover::before {
+  transform: scaleX(1);
+  background: #dddbdb; /* White background with slight transparency on hover */
+  transition-delay: 0.25s;
+}
+
+.link-flash2:hover::after {
+  transform: scaleX(0);
+  background: #ffffff; /* White background with slight transparency on hover */
+  transition-delay: 0s;
+}
+
+/*  */
+
+.link-flash1 {
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+
+  position: relative;
+}
+
+.link-flash1::before,
+.link-flash1::after {
+  position: absolute;
+  content: "";
+  left: 0;
+  bottom: -2px;
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: #000000;
+  transition: 1.1s var(--ease-out-expo);
+}
+
+.link-flash1::before {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.link-flash1::after {
+  transform-origin: right;
+  transition-delay: 0.25s;
+}
+
+.link-flash1:hover::before {
+  transform: scaleX(1);
+  transition-delay: 0.25s;
+}
+
+.link-flash1:hover::after {
+  transform: scaleX(0);
+  transition-delay: 0s;
+}
+
+/* Link flash custom for product des tab*/
+
+.link-flash3 {
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+
+  position: relative;
+  display: inline-block; /* Ensure it works with inline text */
+}
+
+.link-flash3::before,
+.link-flash3::after {
+  position: absolute;
+  content: "";
+  left: 0;
+  bottom: -1px;
+  display: block;
+  width: 100%;
+  height: 5px;
+  background: transparent; /* Start as transparent */
+  transition: transform 1.1s var(--ease-out-expo), background-color 1.1s var(--ease-out-expo); /* Transition background color and transform */
+}
+
+.link-flash3::before {
+  transform: scaleX(0);
+  transform-origin: left;
+}
+
+.link-flash3::after {
+  transform-origin: right;
+  transition-delay: 0.25s;
+}
+
+.link-flash3:hover::before {
+  transform: scaleX(1);
+  background: #000000; /* White background with slight transparency on hover */
+  transition-delay: 0.25s;
+}
+
+.link-flash3:hover::after {
+  transform: scaleX(0);
+  background: #5a5757; /* White background with slight transparency on hover */
+  transition-delay: 0s;
+}
+
+/*  */
+.link_custom {
+  position: absolute;
+  content: "";
+  left: 0;
+  bottom: -1px;
+  display: block;
+  width: 100%;
+  height: 5px;
+  background: #000000;
+  transition: transform 1.1s var(--ease-out-expo), background-color 1.1s var(--ease-out-expo); /* Transition background color and transform */
 }

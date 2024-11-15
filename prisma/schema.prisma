@@ -1,0 +1,219 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+  MANAGER
+  // Add other roles as needed
+}
+
+model User {
+  id               String    @id @default(uuid())
+  email            String    @unique
+  name             String?
+  password         String?
+  role             UserRole  @default(USER) // Use enum here
+  twoFactorEnabled Boolean   @default(false)
+  image            String?
+  accounts         Account[]
+  sessions         Session[]
+
+  Product Product[]
+
+  Cart Cart[]
+
+  Order Order[]
+
+  Wishlist Wishlist[]
+}
+
+model Account {
+  id                String @id @default(uuid())
+  userId            String
+  user              User   @relation(fields: [userId], references: [id])
+  provider          String
+  providerAccountId String
+}
+
+model Session {
+  id      String   @id @default(uuid())
+  userId  String
+  user    User     @relation(fields: [userId], references: [id])
+  expires DateTime
+}
+
+model SubCategory {
+  id         Int       @id @default(autoincrement())
+  name       String
+  categoryId Int
+  category   Category  @relation(name: "CategoryToSubCategory", fields: [categoryId], references: [id], onDelete: Cascade)
+  products   Product[]
+}
+
+model Category {
+  id            Int           @id @default(autoincrement())
+  name          String
+  subcategories SubCategory[] @relation(name: "CategoryToSubCategory") // Cascade delete SubCategories when Category is deleted
+}
+
+model Product {
+  id            Int              @id @default(autoincrement())
+  title         String
+  description   String
+  price         Float
+  stock         Int // Only for products without variants
+  variants      ProductVariant[] // Relation to product variants
+  tags          Tag[]            @relation("ProductTags") // Many-to-many relation to tags
+  productTag    ProductTag[]
+  userId        String
+  user          User             @relation(fields: [userId], references: [id])
+  subcategoryId Int
+  subcategory   SubCategory      @relation(fields: [subcategoryId], references: [id], onDelete: Cascade) // Define cascade here
+  OrderItem     OrderItem[]
+  WishlistItem  WishlistItem[]
+  CartItem      CartItem[]
+
+  @@map("products")
+}
+
+model ProductVariant {
+  id        Int            @id @default(autoincrement())
+  productId Int
+  product   Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  sizes     VariantStock[]
+  color     String
+  colorName String         @default("white")
+  images    Image[] // Relation to Image model for variant images
+  CartItem  CartItem[]
+  OrderItem OrderItem[]
+
+  @@map("productvariants")
+}
+
+model VariantStock {
+  id             Int            @id @default(autoincrement())
+  variantId      Int // Foreign key to ProductVariant
+  size           String // Size value (e.g., 'S', 'M', 'XL')
+  stock          Int // Stock level for the specific size
+  productVariant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  CartItem       CartItem[]
+  OrderItem      OrderItem[]
+
+  @@map("variantstocks")
+}
+
+model Image {
+  id             Int             @id @default(autoincrement())
+  url            String // URL of the image, e.g., Cloudinary URL
+  variantId      Int?
+  productVariant ProductVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade) // Image belongs to one variant
+  altText        String? // Optional alt text for the image
+
+  @@map("images")
+}
+
+model Tag {
+  id         Int          @id @default(autoincrement())
+  name       String
+  products   Product[]    @relation("ProductTags") // Many-to-many relation to products
+  productTag ProductTag[]
+
+  @@map("tags")
+}
+
+// Explicit Join Table to create the many-to-many relationship between Product and Tag
+model ProductTag {
+  productId Int
+  tagId     Int
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  tag     Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([productId, tagId]) // Composite primary key
+  @@map("productags")
+}
+
+// 
+
+model Cart {
+  id        Int        @id @default(autoincrement())
+  userId    String     @unique // Ensure userId is marked as unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     CartItem[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model CartItem {
+  id               Int            @id @default(autoincrement())
+  cartId           Int
+  productId        Int
+  quantity         Int
+  productVariantId Int
+  productStockId   Int
+  variantStock     VariantStock   @relation(fields: [productStockId], references: [id], onDelete: Cascade) // Reference to ProductVariant
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  product          Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  cart             Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+model Order {
+  id        Int         @id @default(autoincrement())
+  userId    String    
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     OrderItem[]
+  total     Float // Total price for the order
+  status    Int
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model OrderItem {
+  id               Int            @id @default(autoincrement())
+  orderId          Int
+  productId        Int
+  productStockId   Int
+  productVariantId Int // Reference to ProductVariant
+  quantity         Int
+  variantStock     VariantStock   @relation(fields: [productStockId], references: [id], onDelete: Cascade) // Reference to ProductVariant
+  productVariant   ProductVariant @relation(fields: [productVariantId], references: [id], onDelete: Cascade)
+  order            Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product          Product        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+// wishlist
+model Wishlist {
+  id        Int            @id @default(autoincrement())
+  userId    String
+  user      User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  items     WishlistItem[]
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+}
+
+model WishlistItem {
+  id         Int      @id @default(autoincrement())
+  wishlistId Int
+  productId  Int
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  wishlist   Wishlist @relation(fields: [wishlistId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
