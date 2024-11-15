@@ -68,7 +68,7 @@ async function main() {
       price: 49.99,
       stock: 0, // Will use variants for stock
       subcategoryId: dresses.id,
-      userId:"7d95a152-3df0-4436-b057-528eca680e1d",
+      userId:"e49288f2-d118-4edb-82d7-8ccbf3476471",
       variants: {
         create: [
           {
@@ -117,7 +117,7 @@ async function main() {
       price: 39.99,
       stock: 0, // Will use variants for stock
       subcategoryId: bottoms.id,
-      userId:"7d95a152-3df0-4436-b057-528eca680e1d",
+      userId:"e49288f2-d118-4edb-82d7-8ccbf3476471",
       variants: {
         create: [
           {
@@ -166,7 +166,7 @@ async function main() {
       price: 19.99,
       stock: 0, // Will use variants for stock
       subcategoryId: tops.id,
-      userId:"7d95a152-3df0-4436-b057-528eca680e1d",
+      userId:"e49288f2-d118-4edb-82d7-8ccbf3476471",
       variants: {
         create: [
           {
@@ -213,7 +213,7 @@ async function main() {
       price: 29.99,
       stock: 0, // Will use variants for stock
       subcategoryId: tops.id,
-      userId:"7d95a152-3df0-4436-b057-528eca680e1d",
+      userId:"e49288f2-d118-4edb-82d7-8ccbf3476471",
       variants: {
         create: [
           {
