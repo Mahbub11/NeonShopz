@@ -109,11 +109,11 @@ export function VariantComponent({ variant }: { variant: ProductVariant }) {
   };
 
   const handleSave = () => {
-    mutation.mutate(localVariant, {
-      onSuccess: () => {
-        console.log("Variant updated successfully");
-      },
-    });
+    // mutation.mutate(localVariant, {
+    //   onSuccess: () => {
+    //     console.log("Variant updated successfully");
+    //   },
+    // });
   };
 
   return (
